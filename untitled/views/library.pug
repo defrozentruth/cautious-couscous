@@ -1,0 +1,63 @@
+doctype html
+html
+    head
+        title= title
+        link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/w3-css/4.1.0/w3.min.css')
+    body
+        block content
+        block var
+
+block content
+    script(src = './public/javascripts/ajax.js')
+    div.w3-container.w3-black.w3-center
+        h1= title
+    div.w3-dark-gray.w3-container.w3-center
+        div.w3-col.l1.w3-left
+            h2.w3-left Фильтры:
+        div.w3-col.l1.w3-left
+            p
+                button(onclick='in_stock(this)' id="in_stock").w3-round-medium.w3-left.w3-button.w3-white В наличии
+        div.w3-col.l1.w3-left
+            p
+                button(onclick='overdue(this)' id="overdue").w3-round-medium.w3-left.w3-button.w3-white Просрочены
+        div.w3-col.l4.w3-left
+            p
+                button(onclick='no_filter(this)' id="no_filter").w3-round-medium.w3-left.w3-button.w3-white Очистить
+        div.w3-col.s3.w3-right
+            p
+                button(onclick="window.addDialog.showModal()").w3-round-medium.w3-right.w3-button.w3-green Добавить
+                dialog(id="addDialog").w3-round-xlarge.w3-gray.w3-text-white.w3-border-black
+                    button(onclick="window.addDialog.close()").w3-button.w3-red.w3-display-topright.w3-round-medium &times
+                    p
+                    form(action="/book/new" method="POST").w3-col
+                        div.w3-container.w3-serif
+                            h4 Введите информацию о книге:
+                            input(required name="title" id="title" placeholder="Название книги").w3-round-medium
+                            p
+                            input(required name="author" id="author" placeholder="Автор").w3-round-medium
+                            p
+                            input(required type="date" id="date" name="date").w3-round-medium
+                            p
+                            button.w3-button.w3-green.w3-round-large.w3-border-black(type='Submit') Принять
+    div.w3-container
+        each item, ind in books
+            p
+            div(id = item.id).w3-col.l12.w3-border-black.w3-center.w3-gray.w3-round-medium
+                p.w3-col.l2 Название: #{item.title}
+                p.w3-col.l2 Автор: #{item.author}
+                p.w3-col.l2 Выпущена: #{new Date(item.date).toLocaleDateString('en-GB')}
+                div.w3-right.w3-col.m2
+                    form(action="/book/"+item.id method="GET")
+                        div
+                            button.w3-button.w3-green.w3-round-medium.w3-left(type='Submit') Выбрать
+                    button(onclick=`window.deleteDialog[${ind}].showModal()`).w3-button.w3-red.w3-round-medium.w3-right Удалить
+                    dialog(id="deleteDialog").w3-round-xlarge.w3-gray.w3-text-white.w3-border-black
+                        button(onclick=`window.deleteDialog[${ind}].close()`).w3-button.w3-red.w3-display-topright.w3-round-medium &times
+                        p
+                        form(action="/book/delete/"+item.id method="POST").w3-col
+                            div.w3-container.w3-serif
+                                h4 Вы уверены, что хотите удалить эту книгу из библиотеки?
+                                button.w3-button.w3-green.w3-round-large.w3-border-black(type='Submit') Да
+            div.w3-white
+                p.w3-text-white .
+

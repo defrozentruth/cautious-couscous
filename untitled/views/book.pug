@@ -1,0 +1,60 @@
+doctype html
+html
+    head
+        title= title
+        link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/w3-css/4.1.0/w3.min.css')
+    body
+        block content
+        block var
+
+block content
+    div.w3-container.w3-black
+        h1.w3-center= 'Библиотека.онлайн'
+    div
+        p
+        form(action="/library" method="GET")
+            div.w3-col.s1.w3-center
+                button.w3-button.w3-gray.w3-border.w3-border-black.w3-round-large.w3-text-dark-gray(type='Submit') Вернуться к списку
+    div.w3-container.w3-center.w3-col.s5.w3-display-middle
+        p
+        div.w3-col.s2
+        div(style="display: flex; flex-direction: column; text-align: left").w3-center
+            h1 #{title}
+            h3 Автор: #{author}
+            h4 Дата выпуска: #{date}
+            h4 Есть в наличии: #{in_stock}
+            h4 Читатель: #{reader}
+            if return_date === '-'
+                h4 Дата возврата: #{return_date}
+            else
+                h4 Дата возврата: #{new Date(return_date).toLocaleDateString('en-GB')}
+            div.w3-center
+                button(onclick="window.editDialog.showModal()").w3-left.w3-button.w3-gray.w3-border.w3-border-black.w3-round-large.w3-text-dark-gray.w3-col.s5 Редактировать
+                dialog(id="editDialog").w3-round-large.w3-dark-gray.w3-border-black
+                    button(onclick="window.editDialog.close()").w3-button.w3-red.w3-display-topright.w3-round-medium &times
+                    p
+                    form(action="/book/edit/" + ID method="POST").w3-col
+                        div.w3-container.w3-serif
+                            p Введите новые данные:
+                            input(required name="title" id="title" placeholder="Название книги").w3-round-medium.w3-light-gray
+                            p
+                            input(required name="author" id="author" placeholder="Автор").w3-round-medium.w3-light-gray
+                            p
+                            input(required type="date" id="date" name="date").w3-round-medium.w3-light-gray
+                            p
+                            button.w3-button.w3-green.w3-round-medium(type='Submit') Принять
+                if in_stock === "да"
+                    button(onclick="window.takeDialog.showModal()").w3-gray.w3-border.w3-border-black.w3-round-large.w3-text-dark-gray.w3-right.w3-button.w3-col.s5 Взять книгу
+                    dialog(id="takeDialog").w3-round-large.w3-dark-gray.w3-border-black
+                        button(onclick="window.takeDialog.close()").w3-button.w3-red.w3-display-topright.w3-round-medium &times
+                        p
+                        form(action="/book/take/"+ID method="POST").w3-col
+                            div.w3-container.w3-serif
+                                p Введите своё имя:
+                                input(required name="reader" id="reader" placeholder="Имя читателя").w3-round-medium.w3-light-gray
+                                p
+                                button.w3-button.w3-green.w3-round-medium(type='Submit') Принять
+                else
+                    form(action="/book/return/"+ID method="POST")
+                        button.w3-gray.w3-border.w3-border-black.w3-round-large.w3-text-dark-gray.w3-right.w3-button.w3-col.s5(type='Submit') Вернуть книгу
+        p.w3-col.s2
